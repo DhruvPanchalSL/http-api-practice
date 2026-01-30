@@ -18,7 +18,7 @@ class ApiService {
       throw Exception('Failed to fetch');
     }
   }
-  
+
   Future<Post>createPost()async{
    final response=await http.post(
      Uri.parse('https://dummyjson.com/posts/add'),
@@ -60,5 +60,36 @@ class ApiService {
    }
 
   }
-  
+
+ Future<Post> updatePost({
+   required int postId,
+   required String title,
+   required String body,
+   required String token,
+ }) async {
+   final url = Uri.parse('https://dummyjson.com/posts/$postId');
+
+   final response = await http.patch(
+     url,
+     headers: {
+       'Content-Type': 'application/json',
+       'Authorization': 'Bearer $token',
+     },
+     body: jsonEncode({
+       'title': title,
+       'body': body,
+     }),
+   );
+
+   if (response.statusCode == 200) {
+     final jsonData = jsonDecode(response.body);
+     return Post.fromJson(jsonData);
+   } else {
+     throw Exception('Failed to update post');
+   }
+ }
+
+
+
+
 }
